@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ButterOS</title>
+    <link rel="stylesheet" href="main.css">
+  </head>
+  <body>
+    <div id="startup">
+      <img src="https://github.com/butterdogco/butterdogco.github.io/blob/main/docs/img/general/ButterDog%20Glow.png?raw=true">
+      <h1>ButterOS</h1>
+    </div>
+
+    <main id="workspace"></main>
+    <div id="desktop"></div>
+    <div id="startMenu" class="closed">
+      <div class="appSection" id="installedApps">
+        <p>Installed Apps</p>
+      </div>
+      <div class="appSection" id="daHubApps"></div>
+    </div>
+    <div id="taskbar">
+      <button onclick="onStartClicked()" title="Start menu" class="appIcon smallAppIcon" id="startButton"></button>
+    </div>
+    <div id="infoBar">
+      <p id="time">January 1 12:00 AM</p>
+    </div>
+    
+    <script defer>
+      function eruda() {
+        var script = document.createElement('script');
+        script.src="https://cdn.jsdelivr.net/npm/eruda"; 
+        document.body.append(script); 
+        script.onload = function () { 
+          eruda.init(); 
+        } 
+      }
+      eruda();
+    </script>
+    <script src="apps.js" defer></script>
+    <script src="dragger.js" defer></script>
+    <script src="main.js" defer></script>
+  </body>
+</html>

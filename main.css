@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+@keyframes startupAnim {
+  0%, 50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes windowOpen {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes windowClose {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+:root {
+  --shadow1color: rgb(0,0,0,0.2);
+
+  --color1: rgb(0,0,0);
+  --color2: rgb(30,30,40);
+  
+  --shade1: rgb(80,80,90);
+  
+  --color1trans: rgba(0,0,0,0.5);
+  --color2trans: rgba(30,30,40,0.5);
+  
+  --titlebarpadding: 4px;
+  --titlebarheight: 20px;
+  --radius1: 12px;
+  
+  --taskbar-app-margin: 5px;
+  --taskbarheight: 50px;
+  --taskbarpadding: 8px;
+  --taskbarbottommargin: 4px;
+  
+  --startmenubottommargin: 90px;
+  --startmenuheight: 500px;
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  margin: 0;
+  background-color: var(--color1);
+  background-image: url("file:///home/chronos/u-db339c0884aa5795fbc0473acdcdda7e571a1005/MyFiles/Downloads/winter%20bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+  color: white;
+  overflow: hidden;
+}
+
+* {
+  font-family: inherit;
+  color: inherit;
+}
+
+#startup {
+  pointer-events: none;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: black;
+  z-index: 9999999999999999999999;
+
+  img {
+    opacity: 0;
+    position: absolute;
+    object-fit: contain;
+    width: 50vw;
+    aspect-ratio: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s ease;
+  }
+
+  h1 {
+    position: absolute;
+    transform: translateX(-50%);
+    bottom: 5px;
+    left: 50%;
+    text-align: center;
+    opacity: .5;
+  }
+}
+
+.appIcon {
+  background-color: transparent;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  border-radius: var(--radius1);
+  padding: 0;
+  border: 2px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: 0.15s ease;
+
+  img {
+    margin: 0;
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+    transition: 0.15s ease;
+    border-radius: var(--radius1);
+  }
+}
+
+.appIcon:hover {
+  background-color: var(--color2trans);
+  border: 2px solid var(--color2);
+  box-shadow: 0 0 8px var(--shadow1color);
+
+  img {
+    filter: brightness(80%);
+    -webkit-filter: brightness(80%);
+  }
+}
+
+.largeAppIcon {
+  width: 90px;
+  height: 100px;
+  padding: 0;
+  padding-bottom: 4px;
+
+  img {
+    height: 80%;
+  }
+  
+  p {
+    text-align: center;
+    margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 20%;
+  }
+}
+
+.smallAppIcon {
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  text-align: center;
+  border-radius: var(--radius1);
+  width: 60px;
+  height: 60px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: 0.15s ease;
+
+  img {
+    width: inherit;
+  }
+}
+
+
+#desktop {
+  position: absolute;
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 100vh;
+  overflow-y: hidden;
+  z-index: 0;
+  padding: 8px;
+
+  button  {
+    margin-bottom: var(--taskbar-app-margin)
+  }
+}
+
+#taskbar {
+  box-shadow: 0 0 8px var(--shadow1color);
+  min-width: 50px;
+  height: calc(var(--taskbarheight) + var(--taskbarpadding));
+  position: fixed;
+  bottom: var(--taskbarbottommargin);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--taskbarpadding);
+  background-color: var(--color2trans);
+  border-radius: var(--radius1);
+  transition: 0.2s ease;
+  z-index: 99999;
+
+  button:not(:only-child):not(:last-child) {
+    margin-right: var(--taskbar-app-margin);
+  }
+  
+  #startButton {
+    background-image: url("https://raw.githubusercontent.com/butterdogco/butterdogco.github.io/main/docs/img/favicon.ico");
+  }
+}
+
+#infoBar {
+  box-shadow: 0 0 8px var(--shadow1color);
+  min-width: 90px;
+  height: calc(var(--taskbarheight) + var(--taskbarpadding));
+  position: fixed;
+  bottom: var(--taskbarbottommargin);
+  right: var(--taskbarbottommargin);
+  padding: var(--taskbarpadding);
+  background-color: var(--color2trans);
+  border-radius: var(--radius1);
+  transition: 0.2s ease;
+  z-index: 999;
+
+  #time {
+    font-size: 16px;
+    margin: 0;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+}
+
+#startMenu {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 8px var(--shadow1color);
+  width: 400px;
+  height: var(--startmenuheight);
+  max-width: 80vw;
+  max-height: 80vh;
+  background: var(--color2trans);
+  border: 4px solid var(--color1trans);
+  border-radius: var(--radius1);
+  z-index: 999;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--startmenubottommargin);
+  opacity: 1;
+  transition: 0.1s ease-out;
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  .appSection {
+    width: 100%;
+
+    button {
+      margin-top: var(--taskbar-app-margin);
+      margin-left: var(--taskbar-app-margin);
+    }
+  
+    h1, h2, p {
+      text-align: center;
+    }
+  
+    h2 {
+      margin-bottom: 0;
+    }
+  
+    p {
+      margin: 0;
+    }
+  
+    hr {
+      border-color: var(--shade1);
+    }
+  }
+}
+
+#startMenu.closed {
+  bottom: calc(var(--startmenuheight) * -1);
+  opacity: 0;
+}
+
+main {
+  z-index: 2;
+  position: absolute;
+  
+  .window {
+    box-shadow: 0 0 8px var(--shadow1color);
+    z-index: 2;
+    min-height: 300px;
+    min-width: 300px;
+    background-color: var(--color1);
+    border-radius: var(--radius1);
+    border: 2px solid var(--color2);
+    overflow: hidden;
+    position: absolute;
+    resize: both;
+    animation: windowOpen 0.2s ease-out;
+    
+    .titleBar {
+      width: 100vw;
+      height: var(--titlebarheight);
+      color: white;
+      text-align: left;
+      background: var(--color2);
+      padding: var(--titlebarpadding);
+      cursor: grab;
+      margin: 0;
+    }
+    
+    button {
+      border: none;
+      transition: 0.2s ease;
+      cursor: pointer;
+      position: absolute;
+      margin: 0;
+      width: 40px;
+    }
+    
+    .close {
+      background: transparent;
+      height: calc(var(--titlebarheight) + var(--titlebarpadding) + var(--titlebarpadding));
+      right: 0;
+      top: 0;
+    }
+    
+    .close:hover {
+      background: red;
+    }
+    
+    .expand {
+      background: transparent;
+      height: calc(var(--titlebarheight) + var(--titlebarpadding) + var(--titlebarpadding));
+      right: 40px;
+      top: 0;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .expand:hover {
+      background: var(--shade1);
+    }
+    
+    /* Issue with iframe sizing: it is the window width and height, not including the titlebar. This makes it display offscreen. */
+    iframe {
+      height: calc(100% - var(--titlebarpadding) - var(--titlebarheight));
+      width: 100%;
+      border: none;
+      outline: none;
+      margin: 0;
+    }
+  }
+  
+  .window.maximized {
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
