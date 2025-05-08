@@ -2,18 +2,30 @@ function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   var isResizing = false;
   const resizeThreshold = 50; // Distance from the bottom-right corner to start resizing
+  const topRightThresholdX = 120; // Distance from the top-right corner to start resizing
+  const topRightThresholdY = 28; // Distance from the top-right corner to start resizing
 
   elmnt.addEventListener("mousedown", function(e) {
     // Check if the mouse is near the bottom-right corner for resizing
-    if (isNearResizeArea(e)) {
+    const isInCorner = isNearTopRightCorner(e);
+    if (isNearResizeArea(e) && !isInCorner) {
       isResizing = true;
       document.onmousemove = elementResize;
       document.onmouseup = closeResizeElement;
       e.preventDefault(); // Prevent the drag when resizing
-    } else {
+    } else if (!isInCorner) {
       dragMouseDown(e); // Otherwise, start dragging
     }
   });
+
+  function isNearTopRightCorner(e) {
+    const rect = elmnt.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+
+    // Check if the mouse is within the threshold of the top-right corner
+    return (x >= rect.right - topRightThresholdX && x <= rect.right && y >= rect.top && y <= rect.top + topRightThresholdY);
+  }
 
   // Check if the mouse is near the bottom-right corner
   function isNearResizeArea(e) {
@@ -22,7 +34,7 @@ function dragElement(elmnt) {
     const y = e.clientY;
 
     // Check if the mouse is within the threshold of the bottom-right corner
-    return x >= rect.right - resizeThreshold && y >= rect.bottom - resizeThreshold;
+    return (x >= rect.right - resizeThreshold && y >= rect.bottom - resizeThreshold);
   }
 
   // Function to resize the element
