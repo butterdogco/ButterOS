@@ -436,12 +436,12 @@ function gotButterDogApps(apps) {
     const lowerLink = link.toLowerCase();
     if (!lowerLink.includes("google.com") && !lowerLink.includes("b-dog.co") && !lowerLink.includes("butteros")) {
       if (!lowerLink.includes("http")) {
-        link = `https://butterdogceo.github.io/bdogco/${link}`;
+        link = `https://butterdogco.com/${link}`;
       }
 
       const info = {
         name: app.Name || "",
-        icon: `https://butterdogceo.github.io/bdogco/${app.Icon}` || "",
+        icon: `https://butterdogco.com/${app.Icon}` || "",
         url: link || "#invalidLink",
         startsMaximized: false,
         width: "70vw",
@@ -487,7 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => console.error(err));
 
   // Get ButterDogCo app list
-  const bdogURL = "https://butterdogceo.github.io/bdogco/js/cards.js";
+  const bdogURL = "https://butterdogco.com/js/cards.js";
   fetch(bdogURL)
     .then(response => response.text())
     .then(scriptContent => {
