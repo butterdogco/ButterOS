@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>ButterOS</title>
-    <link rel="apple-touch-icon" sizes="256x256" href="https://raw.githubusercontent.com/butterdogco/butterdogco.github.io/main/docs/img/icons/ButterOS.png">
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/butterdogco/butterdogco.github.io/main/docs/img/icons/ButterOS.png">
-    <link rel="stylesheet" href="css/main.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-  </head>
-  <body>
-    <div id="startup">
-      <img src="img/ButterDog Glow.png" alt="ButterDog Glow">
-      <h1>ButterOS v0.2</h1>
-    </div>
 
-    <main id="workspace"></main>
-    <div id="desktop"></div>
-    <div id="startMenu" class="closed">
-      <div class="appSection" id="installedApps">
-        <p>Installed Apps</p>
-      </div>
-      <div class="appSection" id="daHubApps"></div>
-    </div>
-    <div id="taskbar">
-      <button onclick="onStartClicked()" title="Start menu" class="appIcon smallAppIcon" id="startButton"></button>
-    </div>
-    <div id="infoBar">
-      <p id="time">January 1 12:00 AM</p>
-    </div>
-    
-    <script src="js/apps.js" defer></script>
-    <script src="js/dragger.js" defer></script>
-    <script src="js/main.js" defer></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>ButterOS</title>
+  <meta name="description"
+    content="ButterOS is a web-based &quot;operating system&quot; that runs in your browser. It features a desktop environment, a start menu, and a variety of apps.">
+  <link rel="apple-touch-icon" sizes="256x256" href="./img/icons/ButterOS-256.png">
+  <link rel="icon" href="./favicon.ico">
+  <link rel="stylesheet" href="./css/main.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <div id="startupContainer" class="startup">
+    <img src="./img/ButterDog Glow.png" alt="ButterDog Glow">
+    <h1>ButterOS v0.2.1</h1>
+  </div>
+
+  <main id="workspace"></main>
+
+  <div id="desktop"></div>
+
+  <div id="startMenu" class="closed">
+    <section id="installedAppsSection">
+      <p>Installed Apps</p>
+      <div class="appGroup" id="installedAppsGroupContainer"></div>
+    </section>
+    <section id="daHubAppsSection"></section>
+  </div>
+
+  <nav id="taskbar">
+    <button onclick="onStartClicked()" title="Start menu" class="appIcon smallAppIcon" id="startButton"></button>
+  </nav>
+
+  <nav id="infoBar">
+    <p id="time">January 1 12:00 AM</p>
+  </nav>
+
+  <script src="./js/apps.js" defer></script>
+  <script src="./js/dragger.js" defer></script>
+  <script src="./js/main.js" defer></script>
+</body>
+
 </html>

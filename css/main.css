@@ -1,4 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('./themes/dark.css');
+
+:root {
+  /* --shadow1color: rgb(0, 0, 0, 0.2);
+  --shadow2color: rgba(0, 0, 0, 0.6);
+
+  --color1: rgb(0, 0, 0);
+  --color2: rgb(24, 24, 24);
+
+  --shade1: rgb(80, 80, 90);
+  --shade2: rgb(255, 255, 255);
+
+  --shade1-transparent: rgba(80, 80, 90, 0.5);
+  --shade2-transparent: rgba(255, 255, 255, 0.05);
+
+  --color1trans: rgba(0, 0, 0, 0.5);
+  --color2trans: rgba(30, 30, 40, 0.75);
+
+  --accent1: rgb(145, 145, 233);
+  --windowAccent: rgba(0, 0, 0, 0.726);
+
+  --transparentBackground: rgba(0, 0, 0, 0.6);
+  
+  --startupBackground: black; */
+
+  --titlebarpadding: 4px;
+  --titlebarheight: 20px;
+  --radius1: 8px;
+
+  --startmenupadding: 8px;
+
+  --taskbar-app-margin: 8px;
+  --taskbarheight: 50px;
+  --taskbarpadding: 8px;
+  --taskbarbottommargin: 4px;
+
+  --desktop-app-margin: 12px;
+
+  --startmenubottommargin: 90px;
+  --startmenuheight: 500px;
+}
 
 @keyframes startupLoad {
   0% {
@@ -15,7 +56,9 @@
 }
 
 @keyframes startupAnim {
-  0%, 50% {
+
+  0%,
+  50% {
     opacity: 1;
   }
 
@@ -27,11 +70,14 @@
 @keyframes windowOpen {
   0% {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.8);
+    filter: blur(32px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
+    filter: blur(0);
   }
 }
 
@@ -39,50 +85,14 @@
   0% {
     opacity: 1;
     transform: scale(1);
+    filter: blur(0);
   }
 
   100% {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.8);
+    filter: blur(32px);
   }
-}
-
-:root {
-  --shadow1color: rgb(0,0,0,0.2);
-  --shadow2color: rgba(0, 0, 0, 0.6);
-
-  --color1: rgb(0,0,0);
-  --color2: rgb(24, 24, 24);
-  
-  --shade1: rgb(80,80,90);
-  --shade2: rgb(255, 255, 255);
-
-  --shade1-transparent: rgba(80, 80, 90, 0.5);
-  --shade2-transparent: rgba(255, 255, 255, 0.05);
-  
-  --color1trans: rgba(0,0,0,0.5);
-  --color2trans: rgba(30, 30, 40, 0.75);
-
-  --accent1: rgb(145, 145, 233);
-  --windowAccent: rgba(0, 0, 0, 0.726);
-
-  --transparentBackground: rgba(0,0,0,0.6);
-  
-  --titlebarpadding: 4px;
-  --titlebarheight: 20px;
-  --radius1: 8px;
-
-  --startmenupadding: 8px;
-  
-  --taskbar-app-margin: 8px;
-  --taskbarheight: 50px;
-  --taskbarpadding: 8px;
-  --taskbarbottommargin: 4px;
-
-  --desktop-app-margin: 12px;
-  
-  --startmenubottommargin: 90px;
-  --startmenuheight: 500px;
 }
 
 body {
@@ -92,9 +102,10 @@ body {
   background-image: url("../img/background/Crystal.jpg");
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: bottom center;
   height: 100vh;
   width: 100vw;
-  color: white;
+  color: var(--color2);
   overflow: hidden;
   transition: backdrop-filter 0.5s ease, background-color 0.5s ease;
 }
@@ -108,7 +119,7 @@ body.backgroundTransition {
   color: inherit;
 }
 
-#startup {
+.startup {
   pointer-events: none;
   position: fixed;
   top: 0;
@@ -116,9 +127,10 @@ body.backgroundTransition {
   opacity: 0;
   height: 100vh;
   width: 100vw;
-  background: black;
+  background: var(--startupBackground);
+  color: var(--color2);
   z-index: 9999999999999999999999;
-  
+
   img {
     opacity: 0.5;
     position: absolute;
@@ -139,12 +151,13 @@ body.backgroundTransition {
     text-align: center;
     opacity: .5;
   }
-}
 
-#startup.startup {
-  opacity: 1;
-  img {
-    animation: starupLoad .5s ease-in-out infinite;
+  &.visible {
+    opacity: 1;
+
+    img {
+      animation: starupLoad .5s ease-in-out infinite;
+    }
   }
 }
 
@@ -168,7 +181,7 @@ body.backgroundTransition {
     opacity: 1;
     filter: none;
     margin: 0;
-    object-fit: fill;
+    object-fit: cover;
     height: 100%;
     width: 100%;
     transition: 0.2s ease;
@@ -198,9 +211,9 @@ body.backgroundTransition {
   height: 115px;
 
   img {
-    height: 80%;
+    height: 82px;
   }
-  
+
   p {
     text-align: center;
     margin: 0;
@@ -225,7 +238,6 @@ body.backgroundTransition {
   transition: 0.15s ease;
 }
 
-
 #desktop {
   position: absolute;
   display: flex;
@@ -237,7 +249,7 @@ body.backgroundTransition {
   width: 100vw;
   z-index: 0;
 
-  button  {
+  button {
     margin-right: var(--desktop-app-margin);
     margin-bottom: var(--desktop-app-margin);
   }
@@ -271,9 +283,9 @@ body.backgroundTransition {
   button:not(:only-child):not(:last-child) {
     margin-right: var(--taskbar-app-margin);
   }
-  
+
   #startButton {
-    background-image: url("https://raw.githubusercontent.com/butterdogco/butterdogco.github.io/main/docs/img/favicon.ico");
+    background-image: url("https://butterdogco.com/favicon.ico");
   }
 }
 
@@ -307,7 +319,7 @@ body.backgroundTransition {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 0 8px var(--shadow2color);
-  width: 400px;
+  width: 460px;
   height: var(--startmenuheight);
   max-width: 80vw;
   max-height: 80vh;
@@ -325,29 +337,28 @@ body.backgroundTransition {
   overflow-x: hidden;
   overflow-y: auto;
 
-  .appSection {
-    width: 100%;
+  h1,
+  h2,
+  p {
+    text-align: center;
+  }
 
-    button {
-      margin-top: var(--taskbar-app-margin);
-      margin-left: var(--taskbar-app-margin);
-    }
-  
-    h1, h2, p {
-      text-align: center;
-    }
-  
-    h2 {
-      margin-bottom: 0;
-    }
-  
-    p {
-      margin: 0;
-    }
-  
-    hr {
-      border-color: var(--shade2-transparent);
-    }
+  h2 {
+    margin-bottom: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  hr {
+    border-color: var(--shade2-transparent);
+  }
+
+  .appGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    width: 100%;
   }
 }
 
@@ -359,7 +370,7 @@ body.backgroundTransition {
 main {
   z-index: 2;
   position: absolute;
-  
+
   .window {
     background-color: var(--transparentBackground);
     backdrop-filter: blur(12px);
@@ -374,11 +385,11 @@ main {
     position: absolute;
     resize: both;
     animation: windowOpen 0.2s ease-out;
-    
+
     .titleBar {
       width: 100vw;
       height: var(--titlebarheight);
-      color: white;
+      color: var(--color2);
       text-align: left;
       background: var(--windowAccent);
       padding: var(--titlebarpadding);
@@ -412,17 +423,17 @@ main {
           margin: 0;
           width: 40px;
         }
-  
+
         .titleButton:hover {
           background: var(--shade1);
         }
-        
+
         .close:hover {
           background: red;
         }
       }
     }
-    
+
     /* Issue with iframe sizing: it is the window width and height, not including the titlebar. This makes it display offscreen. */
     iframe {
       height: calc(100% - var(--titlebarpadding) - var(--titlebarheight));
@@ -433,7 +444,7 @@ main {
       background-color: transparent;
     }
   }
-  
+
   .window.maximized {
     box-shadow: none;
     border-radius: 0;

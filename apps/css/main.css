@@ -1,127 +1,135 @@
-:root {
-    --sidebar-bg-filter: brightness(80%);
+@import url('../../css/themes/dark.css');
 
-    --text-color-light: #ffffff;
-    --text-color-subtitle: #bebebe;
+:root {
+  --sidebar-bg-filter: brightness(80%);
+
+  /* --text-color-light: #ffffff;
+  --text-color-subtitle: #bebebe; */
 }
 
 * {
-    color: inherit;
-    box-sizing: border-box;
-    font-family: inherit;
+  color: inherit;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
 html,
 body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 14px;
-    overflow: hidden;
-    color: white;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+  color: var(--color1);
 }
 
 #settingsContainer {
-    display: inline-flex;
+  display: inline-flex;
 
-    .sidebar {
-        backdrop-filter: var(--sidebar-bg-filter);
-        width: 200px;
-        height: 100vh;
-        overflow-x: hidden;
-        overflow-y: auto;
+  .sidebar {
+    backdrop-filter: var(--sidebar-bg-filter);
+    width: 200px;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 
-        h1, div {
-            padding-left: 12px;
-        }
-
-        .sidebarCategory {
-            width: 90%;
-            margin: auto;
-            padding: 8px 16px 8px 16px;
-            outline: transparent;
-            background: rgba(0,0,0,0);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-
-            h2, p {
-                color: var(--text-color-subtitle);
-                transition: color 0.15s ease;
-                font-weight: normal;
-            }
-
-            h2 {
-                margin: 0;
-            }
-        }
-
-        .sidebarCategory.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            outline: 1px solid rgb(255, 255, 255, 0.2);
-
-            h2, p {
-                color: var(--text-color-light);
-                font-weight: bold;
-            }
-        }
-
-        .sidebarCategory:hover, .sidebarCategory:active {
-            background-color: rgba(255, 255, 255, 0.1);
-            outline: 1px solid rgb(255, 255, 255, 0.2);
-
-            h2, p {
-                color: var(--text-color-light);
-            }
-        }
+    h1,
+    div {
+      padding-left: 12px;
     }
 
-    .content {
-        display: flex;
-        flex-direction: column;
-        justify-content: top center;
-        align-items: center;
-        padding-left: 12px;
-        padding-right: 12px;
-        padding-top: 12px;
-        overflow-x: hidden;
-        overflow-y: auto;
+    .sidebarCategory {
+      width: 90%;
+      margin: auto;
+      padding: 8px 16px 8px 16px;
+      outline: transparent;
+      background: rgba(0, 0, 0, 0);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
 
-        .settingCategory {
-            .setting {
-                background: #00000036;
-                padding: 12px;
-                border-radius: 10px;
+      h2,
+      p {
+        color: var(--color2);
+        transition: color 0.15s ease;
+        font-weight: normal;
+      }
 
-                label {
-                    margin-right: 12px;
-                }
-
-                select {
-                    background: #ffffff1f;
-                    border: none;
-                    padding: 8px;
-                    border-radius: 10px;
-                    cursor: pointer;
-                    transition: background 0.15s ease;
-
-                    option {
-                        background: black;
-                        color: white;
-                    }
-                }
-
-                select:hover, select:focus {
-                    background: #ffffff26;
-                }
-            }
-        }
+      h2 {
+        margin: 0;
+      }
     }
+
+    .sidebarCategory.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      outline: 1px solid rgb(255, 255, 255, 0.2);
+
+      h2,
+      p {
+        color: var(--color1);
+        font-weight: bold;
+      }
+    }
+
+    .sidebarCategory:hover,
+    .sidebarCategory:active {
+      background-color: rgba(255, 255, 255, 0.1);
+      outline: 1px solid rgb(255, 255, 255, 0.2);
+
+      h2,
+      p {
+        color: var(--color1);
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: top center;
+    align-items: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .settingCategory {
+      .setting {
+        background: #00000036;
+        padding: 12px;
+        border-radius: 10px;
+
+        label {
+          margin-right: 12px;
+        }
+
+        select {
+          background: #ffffff1f;
+          border: none;
+          padding: 8px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: background 0.15s ease;
+
+          option {
+            background: black;
+            color: white;
+          }
+        }
+
+        select:hover,
+        select:focus {
+          background: #ffffff26;
+        }
+      }
+    }
+  }
 }
 
 .hidden {
-    display: none;
+  display: none;
 }

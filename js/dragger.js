@@ -1,35 +1,55 @@
-function dragElement(elmnt) {
+const resizeThreshold = 50; // Distance from the bottom-right corner to start resizing
+const topRightThresholdX = 120; // Distance from the top-right corner to start resizing
+const topRightThresholdY = 28; // Distance from the top-right corner to start resizing
+
+function dragElement(element) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   var isResizing = false;
-  const resizeThreshold = 50; // Distance from the bottom-right corner to start resizing
-  const topRightThresholdX = 120; // Distance from the top-right corner to start resizing
-  const topRightThresholdY = 28; // Distance from the top-right corner to start resizing
 
-  elmnt.addEventListener("mousedown", function(e) {
+  element.addEventListener("mousedown", function(event) {
     // Check if the mouse is near the bottom-right corner for resizing
-    const isInCorner = isNearTopRightCorner(e);
-    if (isNearResizeArea(e) && !isInCorner) {
+    const isInCorner = isNearTopRightCorner(event);
+    if (isInCorner) {
+      return; // Do nothing if in the top-right corner to allow other interactions (like maximize)
+    }
+
+    // Check if clicking another interactive element (like buttons) within the window
+    if (event.target.closest("button, .window-controls")) {
+      return; // Do nothing if clicking on buttons or window controls
+    }
+
+    // Check left mouse button
+    if (event.button !== 0 && event.button !== undefined) {
+      return; // Only allow dragging with the left mouse button
+    }
+
+    // Check if near resize area
+    if (isNearResizeArea(event)) {
       isResizing = true;
       document.onmousemove = elementResize;
       document.onmouseup = closeResizeElement;
-      e.preventDefault(); // Prevent the drag when resizing
-    } else if (!isInCorner) {
-      dragMouseDown(e); // Otherwise, start dragging
+      event.preventDefault(); // Prevent the drag when resizing
+    } else {
+      dragMouseDown(event); // Otherwise, start dragging
     }
   });
 
   function isNearTopRightCorner(e) {
-    const rect = elmnt.getBoundingClientRect();
-    const x = e.clientX;
-    const y = e.clientY;
+    const rect = element.getBoundingClientRect();
+    const x = e.clientX - rect.left; // Get the x position relative to the element
+    const y = e.clientY - rect.top;  // Get the y position relative to the element
+
+    // console.log(`Mouse position relative to element: (${x}, ${y})`); // Debugging log
+    // console.log(`Element dimensions: width=${rect.width}, height=${rect.height}`); // Debugging log
+    // console.log(`Top-right threshold: (${rect.width - topRightThresholdX}, ${topRightThresholdY})`); // Debugging log
 
     // Check if the mouse is within the threshold of the top-right corner
-    return (x >= rect.right - topRightThresholdX && x <= rect.right && y >= rect.top && y <= rect.top + topRightThresholdY);
+    return (x >= rect.width - topRightThresholdX && x <= rect.width && y >= 0 && y <= topRightThresholdY);
   }
 
   // Check if the mouse is near the bottom-right corner
   function isNearResizeArea(e) {
-    const rect = elmnt.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
     const x = e.clientX;
     const y = e.clientY;
 
@@ -40,19 +60,20 @@ function dragElement(elmnt) {
   // Function to resize the element
   function elementResize(e) {
     if (isResizing) {
-      const iframe = elmnt.querySelector("iframe");
+      const iframe = element.querySelector("iframe");
       if (iframe) {
         iframe.style.pointerEvents = "none";
       }
-      const width = e.clientX - elmnt.getBoundingClientRect().left;
-      const height = e.clientY - elmnt.getBoundingClientRect().top;
-      elmnt.style.width = width + 'px';
-      elmnt.style.height = height + 'px';
+      element.classList.remove("maximized"); // Remove maximized class when resizing
+      const width = e.clientX - element.getBoundingClientRect().left;
+      const height = e.clientY - element.getBoundingClientRect().top;
+      element.style.width = width + 'px';
+      element.style.height = height + 'px';
     }
   }
 
   function closeResizeElement() {
-    const iframe = elmnt.querySelector("iframe");
+    const iframe = element.querySelector("iframe");
     if (iframe) {
       iframe.style.pointerEvents = "auto";
     }
@@ -64,7 +85,7 @@ function dragElement(elmnt) {
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
-    const iframe = elmnt.querySelector("iframe");
+    const iframe = element.querySelector("iframe");
     if (iframe) {
       iframe.style.pointerEvents = "none";
     }
@@ -86,13 +107,13 @@ function dragElement(elmnt) {
       pos3 = e.clientX;
       pos4 = e.clientY;
       // set the element's new position:
-      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      element.style.top = (element.offsetTop - pos2) + "px";
+      element.style.left = (element.offsetLeft - pos1) + "px";
     }
   }
 
   function closeDragElement() {
-    const iframe = elmnt.querySelector("iframe");
+    const iframe = element.querySelector("iframe");
     if (iframe) {
       iframe.style.pointerEvents = "auto";
     }

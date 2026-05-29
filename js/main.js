@@ -1,34 +1,40 @@
 const taskbar = document.getElementById("taskbar");
 const desktop = document.getElementById("desktop");
 const start = document.getElementById("startMenu");
+const installedAppsGroupContainer = document.getElementById("installedAppsGroupContainer");
 const time = document.getElementById("time");
-const startup = document.getElementById("startup");
+const startup = document.getElementById("startupContainer");
 const startupImg = startup.querySelector("img");
 
 var BreakException = {};
 let appCategories = [];
 let daHubApps = [];
-let butterdogApps = [];
+let butterdogcoApps = [];
 let taskbarApps = [];
 let desktopApps = [];
 let startApps = [];
-let startMenuOpen = false;
-let windowsOpen = 999;
+
+let isStartMenuOpen = false;
+let openWindowsCount = 999;
 let noGenreCategoryIndex = 0;
 
-const startedMaximizedSizeXDecrease = "10vw";
-const startedMaximizedSizeYDecrease = "20vh";
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const maxDesktopApps = 40;
-const maxTaskbarApps = 40;
-const defaultWindowWidth = "800px";
-const defaultWindowHeight = "600px";
-const maxWindowWidth = "100vw";
-const maxWindowHeight = `calc(100vh - ${taskbar.offsetHeight}px - 4px)`;
-const noGenreCategoryName = "Uncatagorized";
+const STARTED_MAXIMIZED_SIZE_X_DECREASE = "10vw";
+const STARTED_MAXIMIZED_SIZE_Y_DECREASE = "20vh";
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MAX_DESKTOP_APPS = 40;
+const MAX_TASKBAR_APPS = 40;
+const DEFAULT_WINDOW_WIDTH = "800px";
+const DEFAULT_WINDOW_HEIGHT = "600px";
+const MAX_WINDOW_WIDTH = "100vw";
+const MAX_WINDOW_HEIGHT = `calc(100vh - ${taskbar.offsetHeight}px - 4px)`;
+const NO_GENRE_CATEGORY_NAME = "Uncatagorized";
+const DA_HUB_URL = "https://dahub.butterdogco.com";
+const DA_HUB_APPS_URL_PREFIX = `${DA_HUB_URL}/apps/`;
+const DA_HUB_APPS_SCRIPT_URL = `${DA_HUB_URL}/js/apps.js`;
+const BUTTERDOGCO_CARDS_SCRIPT_URL = "https://butterdogco.com/js/cards.js";
 
 function onAppIconClicked(app = {}, clickEvent = undefined) {
-  closeStartMenu();
+  setStartMenuOpenState(false);
   createWindow(app, clickEvent || undefined);
 }
 
@@ -37,6 +43,7 @@ function createAppIcon(app, smallIcon, clickEvent, defaultClickEventEnabled) {
   element.classList.add("appIcon");
   element.classList.add(smallIcon !== true && "largeAppIcon" || "smallAppIcon");
   element.title = app.name;
+
   const image = document.createElement("img");
   image.classList.add("loading");
   image.setAttribute("loading", "lazy");
@@ -53,6 +60,7 @@ function createAppIcon(app, smallIcon, clickEvent, defaultClickEventEnabled) {
     }
   };
   element.appendChild(image);
+
   if (smallIcon !== true) {
     const text = document.createElement("p");
     text.innerText = app.name;
@@ -63,20 +71,23 @@ function createAppIcon(app, smallIcon, clickEvent, defaultClickEventEnabled) {
 }
 
 function addAppToDesktop(app) {
-  if (desktopApps.length < maxDesktopApps) {
-    const icon = createAppIcon(app, false);
-    desktop.appendChild(icon);
-    desktopApps.push(icon);
+  if (desktopApps.length >= MAX_DESKTOP_APPS) {
+    return;
   }
+
+  const icon = createAppIcon(app, false);
+  desktop.appendChild(icon);
+  desktopApps.push(icon);
 }
 
-function addAppToStart(app, location) {
-  const icon = createAppIcon(app, false, closeStartMenu, true);
-  if (location && document.getElementById(location)) {
-    document.getElementById(location).appendChild(icon);
+function addAppToStart(app, container) {
+  const icon = createAppIcon(app, false, () => setStartMenuOpenState(false), true);
+  if (container) {
+    container.appendChild(icon);
   } else {
     start.appendChild(icon);
   }
+
   startApps.push(app);
 }
 
@@ -85,7 +96,7 @@ function isAppInTaskbar(app) {
 }
 
 function addAppToTaskbar(app, id) {
-  if (taskbarApps.length < maxTaskbarApps) {
+  if (taskbarApps.length < MAX_TASKBAR_APPS) {
     const icon = createAppIcon(app, true, function () {
       const window = document.getElementById(`app${id}`);
       windowClicked(window);
@@ -111,18 +122,19 @@ function windowClicked(div) {
   if (div.classList.contains("hidden")) {
     div.classList.remove("hidden");
   }
+
   const windows = document.querySelectorAll(".window");
   windows.forEach(function (otherWindow) {
     if (otherWindow != div) {
       otherWindow.style.zIndex -= 1;
     } else {
-      div.style.zIndex = windowsOpen;
+      div.style.zIndex = openWindowsCount;
     }
   });
 }
 
 function closeWindow(div) {
-  windowsOpen -= 1;
+  openWindowsCount -= 1;
   div.style.animation = "windowClose 0.2s ease-in-out";
   setTimeout(() => {
     div.remove();
@@ -143,8 +155,8 @@ function maximizeWindow({ div, maximized = false, lastInfo, changePos = false, s
 
     div.style.top = "0";
     div.style.left = "0";
-    div.style.width = maxWindowWidth;
-    div.style.height = maxWindowHeight;
+    div.style.width = MAX_WINDOW_WIDTH;
+    div.style.height = MAX_WINDOW_HEIGHT;
   } else {
     if (changePos == true || changePos == undefined) {
       if (lastInfo.PosX == "0" && lastInfo.PosY == "0") {
@@ -156,8 +168,8 @@ function maximizeWindow({ div, maximized = false, lastInfo, changePos = false, s
     }
 
     if (startedMaximized == true) {
-      div.style.width = `calc(${lastInfo.SizeX || "100vw"} - ${startedMaximizedSizeXDecrease})`;
-      div.style.height = `calc(${lastInfo.SizeY || "100vh"} - ${startedMaximizedSizeYDecrease})`;
+      div.style.width = `calc(${lastInfo.SizeX || "100vw"} - ${STARTED_MAXIMIZED_SIZE_X_DECREASE})`;
+      div.style.height = `calc(${lastInfo.SizeY || "100vh"} - ${STARTED_MAXIMIZED_SIZE_Y_DECREASE})`;
       centerWindow(div);
     } else {
       div.style.width = lastInfo.SizeX;
@@ -173,7 +185,13 @@ function createWindow(app) {
   let lastInfo = {};
   let maximized = false;
   let minimized = false;
-  const randomId = Math.floor(Math.random() * 1000000);
+
+  let randomId = Math.floor(Math.random() * 1000000);
+  if (document.getElementById(`app${randomId}`)) {
+    while (document.getElementById(`app${randomId}`)) {
+      randomId = Math.floor(Math.random() * 1000000);
+    }
+  }
 
   // Create elements and setup events
   const div = document.createElement("div");
@@ -184,8 +202,8 @@ function createWindow(app) {
     maximizeWindow({ div: div, maximized: true, lastInfo: lastInfo, changePos: false });
     maximized = true;
   } else {
-    div.style.width = app.width || defaultWindowWidth;
-    div.style.height = app.height || defaultWindowHeight;
+    div.style.width = app.width || DEFAULT_WINDOW_WIDTH;
+    div.style.height = app.height || DEFAULT_WINDOW_HEIGHT;
     centerWindow(div);
   }
 
@@ -228,7 +246,7 @@ function createWindow(app) {
     div.classList.toggle("hidden");
   }
   titleBarButtons.appendChild(minimize);
-  
+
   const expand = document.createElement("button");
   expand.setAttribute("aria-label", "Maximize window");
   expand.setAttribute("title", "Maximize window");
@@ -239,7 +257,7 @@ function createWindow(app) {
     lastInfo = maximizeWindow({ div: div, maximized: maximized, lastInfo: lastInfo, changePos: true, startedMaximized: app.startsMaximized });
   };
   titleBarButtons.appendChild(expand);
-  
+
   const close = document.createElement("button");
   close.setAttribute("aria-label", "Close window");
   close.setAttribute("title", "Close window");
@@ -273,30 +291,21 @@ function createWindow(app) {
   addAppToTaskbar(app, randomId);
   dragElement(div);
   windowClicked(div);
-  windowsOpen += 1;
+  openWindowsCount += 1;
 }
 
-function openStartMenu() {
-  start.classList.remove("closed");
-  startMenuOpen = true;
-}
-
-function closeStartMenu() {
-  start.classList.add("closed");
-  startMenuOpen = false;
+function setStartMenuOpenState(open) {
+  start.classList.toggle("closed", !open);
+  isStartMenuOpen = open;
 }
 
 function onStartClicked() {
-  if (startMenuOpen === false) {
-    openStartMenu();
-  } else {
-    closeStartMenu();
-  }
+  setStartMenuOpenState(!isStartMenuOpen);
 }
 
 function updateTime() {
   const date = new Date();
-  const month = months[date.getMonth()].substring(0, 3);
+  const month = MONTHS[date.getMonth()].substring(0, 3);
   const day = date.getDate();
   const hour = date.getHours() > 12 && date.getHours() - 12 || date.getHours();
   const minute = date.getMinutes() < 10 && "0" + date.getMinutes() || date.getMinutes();
@@ -347,50 +356,52 @@ function getAppCategoryIndex(name) {
 }
 
 function desktopClicked() {
-  closeStartMenu();
+  setStartMenuOpenState(false);
 }
 
 function startupImageLoaded() {
   startupImg.style.opacity = 1;
   startup.style.animation = "startupAnim 1.5s ease-in-out";
   startup.style.opacity = "";
-  startup.classList.remove("startup");
+  startup.classList.remove("visible");
 }
 
 function gotDaHubApps(apps) {
   apps.forEach(function (app) {
-    if (app.Hidden !== true) {
-      const info = {
-        name: app.Name || "",
-        icon: `https://joebidenrealomg.github.io/da-hub/apps/${app.Folder && app.Folder || app.Name}/${app.Thumbnail || "thumbnail.png"}`,
-        url: `https://joebidenrealomg.github.io/da-hub/apps/${app.Folder && app.Folder || app.Name}/${app.Index || "index.html"}`,
-        startsMaximized: true,
-      };
+    if (app.Hidden) {
+      return;
+    }
 
-      if (app.Genres != undefined) {
-        app.Genres.forEach(function (genre) {
-          if (appCategoryExists(genre) == false) {
-            appCategories.push({
-              ["name"]: genre,
-              ["apps"]: []
-            });
-          }
-          index = getAppCategoryIndex(genre);
-          if (index) {
-            appCategories[getAppCategoryIndex(genre)]["apps"].push(info);
-          }
-        });
-      } else {
-        if (appCategories[noGenreCategoryIndex] == undefined) {
+    const info = {
+      name: app.Name || "",
+      icon: `${DA_HUB_APPS_URL_PREFIX}${app.Folder && app.Folder || app.Name}/${app.Thumbnail || "thumbnail.png"}`,
+      url: `${DA_HUB_APPS_URL_PREFIX}${app.Folder && app.Folder || app.Name}/${app.Index || "index.html"}`,
+      startsMaximized: true,
+    };
+
+    if (app.Genres != undefined) {
+      app.Genres.forEach(function (genre) {
+        if (appCategoryExists(genre) == false) {
           appCategories.push({
-            ["name"]: noGenreCategoryName,
+            ["name"]: genre,
             ["apps"]: []
           });
         }
-        noGenreCategoryIndex = getAppCategoryIndex(noGenreCategoryName);
-        if (noGenreCategoryIndex != null) {
-          appCategories[noGenreCategoryIndex]["apps"].push(info);
+        index = getAppCategoryIndex(genre);
+        if (index) {
+          appCategories[getAppCategoryIndex(genre)]["apps"].push(info);
         }
+      });
+    } else {
+      if (appCategories[noGenreCategoryIndex] == undefined) {
+        appCategories.push({
+          ["name"]: NO_GENRE_CATEGORY_NAME,
+          ["apps"]: []
+        });
+      }
+      noGenreCategoryIndex = getAppCategoryIndex(NO_GENRE_CATEGORY_NAME);
+      if (noGenreCategoryIndex != null) {
+        appCategories[noGenreCategoryIndex]["apps"].push(info);
       }
     }
   });
@@ -406,12 +417,14 @@ function gotDaHubApps(apps) {
     return 0; // they are equal
   });
 
-  const daHubAppsSection = document.getElementById("daHubApps");
+  const daHubAppsSection = document.getElementById("daHubAppsSection");
   const seperator = document.createElement("hr");
   daHubAppsSection.appendChild(seperator);
+
   const appsNoticeHeader = document.createElement("h2");
   appsNoticeHeader.innerText = "Apps from Da Hub";
   daHubAppsSection.appendChild(appsNoticeHeader);
+
   const appsNoticeText = document.createElement("p");
   appsNoticeText.innerText = "Grouped by category";
   daHubAppsSection.appendChild(appsNoticeText);
@@ -423,9 +436,13 @@ function gotDaHubApps(apps) {
       const text = document.createElement("h2");
       text.innerText = category.name && category.name.charAt(0).toUpperCase() + category.name.slice(1) || "Category";
       daHubAppsSection.appendChild(text);
+
+      const appGroupContainer = document.createElement("div");
+      appGroupContainer.classList.add("appGroup");
       apps.forEach(function (app) {
-        addAppToStart(app, "daHubApps");
+        addAppToStart(app, appGroupContainer);
       });
+      daHubAppsSection.appendChild(appGroupContainer);
     }
   });
 }
@@ -448,7 +465,7 @@ function gotButterDogApps(apps) {
         height: "70vh"
       };
 
-      addAppToStart(info, "installedApps");
+      addAppToStart(info, installedAppsGroupContainer);
     }
   });
 }
@@ -469,12 +486,11 @@ document.addEventListener("DOMContentLoaded", () => {
   builtInApps.forEach(function (app) {
     // addAppToTaskbar(app);
     addAppToDesktop(app);
-    addAppToStart(app, "installedApps");
+    addAppToStart(app, installedAppsGroupContainer);
   });
 
-  // Get da hub app list
-  const url = "https://joebidenrealomg.github.io/da-hub/js/apps.js";
-  fetch(url)
+  // Get Da Hub app list
+  fetch(DA_HUB_APPS_SCRIPT_URL)
     .then(response => response.text())
     .then(scriptContent => {
       const script = document.createElement("script");
@@ -487,16 +503,15 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => console.error(err));
 
   // Get ButterDogCo app list
-  const bdogURL = "https://butterdogco.com/js/cards.js";
-  fetch(bdogURL)
+  fetch(BUTTERDOGCO_CARDS_SCRIPT_URL)
     .then(response => response.text())
     .then(scriptContent => {
       const script = document.createElement("script");
       script.textContent = scriptContent;
       document.head.appendChild(script);
 
-      butterdogApps = cards;
-      gotButterDogApps(butterdogApps);
+      butterdogcoApps = cards;
+      gotButterDogApps(butterdogcoApps);
     })
     .catch(err => console.error(err));
 
