@@ -18,15 +18,15 @@ let isStartMenuOpen = false;
 let openWindowsCount = 999;
 let noGenreCategoryIndex = 0;
 
-const STARTED_MAXIMIZED_SIZE_X_DECREASE = "10vw";
-const STARTED_MAXIMIZED_SIZE_Y_DECREASE = "20vh";
+const STARTED_MAXIMIZED_SIZE_X_DECREASE = "10dvw";
+const STARTED_MAXIMIZED_SIZE_Y_DECREASE = "20dvh";
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const MAX_DESKTOP_APPS = 40;
 const MAX_TASKBAR_APPS = 40;
 const DEFAULT_WINDOW_WIDTH = "800px";
 const DEFAULT_WINDOW_HEIGHT = "600px";
-const MAX_WINDOW_WIDTH = "100vw";
-const MAX_WINDOW_HEIGHT = `calc(100vh - ${taskbar.offsetHeight}px - 4px)`;
+const MAX_WINDOW_WIDTH = "100dvw";
+const MAX_WINDOW_HEIGHT = `calc(100dvh - ${taskbar.offsetHeight}px - 4px)`;
 const NO_GENRE_CATEGORY_NAME = "Uncatagorized";
 const DA_HUB_URL = "https://dahub.butterdogco.com";
 const DA_HUB_APPS_URL_PREFIX = `${DA_HUB_URL}/apps/`;
@@ -262,7 +262,7 @@ function createWindow(app) {
   close.setAttribute("aria-label", "Close window");
   close.setAttribute("title", "Close window");
   close.classList.add("close", "titleButton");
-  close.innerText = "X";
+  close.innerText = "×";
   close.onclick = () => {
     closeWindow(div);
     removeAppFromTaskbar(randomId);
@@ -326,6 +326,19 @@ function updateBackground(name) {
     document.body.classList.remove("backgroundTransition");
     document.body.style.backgroundImage = `url("img/background/${name}.jpg")`;
   };
+}
+
+/**
+ * Function to update the color scheme.
+ * @param {boolean} isLight - Whether or not light mode should be enabled.
+ */
+function updateColorScheme(isLight) {
+  const meta = document.querySelector('meta[name="color-scheme"]');
+  if (!meta) {
+    throw new Error("Failed to set color scheme. Could not find meta");
+  }
+
+  meta.content = isLight ? 'light' : 'dark';
 }
 
 function appCategoryExists(name) {
@@ -449,38 +462,57 @@ function gotDaHubApps(apps) {
 
 function gotButterDogApps(apps) {
   apps["apps"].forEach((app) => {
-    let link = app.AltLink || app.Link || "";
-    const lowerLink = link.toLowerCase();
-    if (!lowerLink.includes("google.com") && !lowerLink.includes("b-dog.co") && !lowerLink.includes("butteros")) {
-      if (!lowerLink.includes("http")) {
-        link = `https://butterdogco.com/${link}`;
-      }
-
-      const info = {
-        name: app.Name || "",
-        icon: `https://butterdogco.com/${app.Icon}` || "",
-        url: link || "#invalidLink",
-        startsMaximized: false,
-        width: "70vw",
-        height: "70vh"
-      };
-
-      addAppToStart(info, installedAppsGroupContainer);
+    const { Name: name, Link: link, Icon: icon } = app;
+    if (!link || !icon) {
+      console.warn('ButterDogCo app', name, 'is missing either a link or icon');
+      return;
     }
+
+    const linkURL = new URL(link, 'https://butterdogco.com/');
+    if (linkURL.hostname === 'sites.google.com' || linkURL.pathname.startsWith('/ButterOS')) {
+      return;
+    }
+
+    const iconURL = new URL(icon, 'https://butterdogco.com/');
+
+    const info = {
+      name: name,
+      icon: iconURL.toString(),
+      url: linkURL.toString(),
+      startsMaximized: false,
+      width: "70dvw",
+      height: "70dvh"
+    };
+
+    addAppToStart(info, installedAppsGroupContainer);
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   // Update background when "updateBackground" message is received
   window.addEventListener("message", function (event) {
-    if (event.data && event.data.type === "updateBackground") {
-      updateBackground(event.data.value);
+    const data = event.data;
+    const type = data ? data.type : null;
+    if (data && type) {
+      const value = data.value;
+      switch (type) {
+        case "updateBackground":
+          updateBackground(value);
+          break;
+        case "updateColorScheme":
+          updateColorScheme(value === 'Light');
+      }
     }
   });
 
-  const savedBackground = localStorage.getItem("BUTTEROS_SETTING_Background") || "Crystal";
-  if (savedBackground != "Crystal") {
+  const savedBackground = localStorage.getItem("BUTTEROS_SETTING_Background");
+  if (savedBackground !== null && savedBackground !== "Crystal") {
     updateBackground(savedBackground);
+  }
+
+  const savedColorScheme = localStorage.getItem("BUTTEROS_SETTING_ColorScheme");
+  if (savedColorScheme) {
+    updateColorScheme(savedColorScheme === 'Light');
   }
 
   builtInApps.forEach(function (app) {
