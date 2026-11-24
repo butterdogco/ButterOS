@@ -1,29 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('./themes/dark.css');
+@import url('./constants.css');
 
 :root {
-  /* --shadow1color: rgb(0, 0, 0, 0.2);
-  --shadow2color: rgba(0, 0, 0, 0.6);
-
-  --color1: rgb(0, 0, 0);
-  --color2: rgb(24, 24, 24);
-
-  --shade1: rgb(80, 80, 90);
-  --shade2: rgb(255, 255, 255);
-
-  --shade1-transparent: rgba(80, 80, 90, 0.5);
-  --shade2-transparent: rgba(255, 255, 255, 0.05);
-
-  --color1trans: rgba(0, 0, 0, 0.5);
-  --color2trans: rgba(30, 30, 40, 0.75);
-
-  --accent1: rgb(145, 145, 233);
-  --windowAccent: rgba(0, 0, 0, 0.726);
-
-  --transparentBackground: rgba(0, 0, 0, 0.6);
-  
-  --startupBackground: black; */
-
   --titlebarpadding: 4px;
   --titlebarheight: 20px;
   --radius1: 8px;
@@ -39,6 +17,19 @@
 
   --startmenubottommargin: 90px;
   --startmenuheight: 500px;
+  
+  /* Theme handling */
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    .startup {
+      background: black;
+    }
+  }
+
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    .startup {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 240, 233, 0.98));
+    }
+  }
 }
 
 @keyframes startupLoad {
@@ -125,9 +116,8 @@ body.backgroundTransition {
   top: 0;
   left: 0;
   opacity: 0;
-  height: 100vh;
-  width: 100vw;
-  background: var(--startupBackground);
+  height: 100dvh;
+  width: 100dvw;
   color: var(--color2);
   z-index: 9999999999999999999999;
 
@@ -135,7 +125,7 @@ body.backgroundTransition {
     opacity: 0.5;
     position: absolute;
     object-fit: contain;
-    width: 50vw;
+    width: 50dvw;
     aspect-ratio: 1;
     top: 50%;
     left: 50%;

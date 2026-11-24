@@ -1,4 +1,4 @@
-@import url('../../css/themes/dark.css');
+@import url('../../css/constants.css');
 
 :root {
   --sidebar-bg-filter: brightness(80%);
@@ -99,6 +99,11 @@ body {
 
     .settingCategory {
       .setting {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        justify-content: space-between;
+        align-items: center;
         background: #00000036;
         padding: 12px;
         border-radius: 10px;
@@ -124,6 +129,10 @@ body {
         select:hover,
         select:focus {
           background: #ffffff26;
+        }
+
+        &:not(:last-child) {
+          margin-bottom: 8px;
         }
       }
     }

@@ -1,0 +1,32 @@
+:root {
+  --shadow1color: light-dark(rgba(42, 48, 60, 0.12), rgb(0, 0, 0, 0.2));
+  --shadow2color: light-dark(rgba(42, 48, 60, 0.22), rgba(0, 0, 0, 0.6));
+
+  --color1: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
+  --color2: light-dark(rgb(35, 42, 54), rgb(211, 211, 211));
+
+  --shade1: light-dark(rgb(112, 122, 140), rgb(80, 80, 90));
+  --shade2: light-dark(rgb(255, 255, 255), rgb(255, 255, 255));
+
+  --shade1-transparent: light-dark(rgba(112, 122, 140, 0.28), rgba(80, 80, 90, 0.5));
+  --shade2-transparent: light-dark(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.05));
+
+  --color1trans: light-dark(rgba(244, 240, 233, 0.78), rgba(0, 0, 0, 0.5));
+  --color2trans: light-dark(rgba(35, 42, 54, 0.16), rgba(30, 30, 40, 0.75));
+
+  --accent1: light-dark(rgb(66, 112, 192), rgb(145, 145, 233));
+  --windowAccent: light-dark(rgba(255, 255, 255, 0.78), rgba(0, 0, 0, 0.726));
+
+  --transparentBackground: light-dark(rgba(255, 255, 255, 0.68), rgba(0, 0, 0, 0.6));
+
+  /* Theme handling */
+  color-scheme: light dark;
+
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+}
